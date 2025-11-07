@@ -1,0 +1,189 @@
+// ============================================
+// APPOINTMENT SERVICE - PRISMA SCHEMA
+// AutoDiag Project
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AGGREGATE ROOT: Appointment
+// ============================================
+model Appointment {
+  id          String  @id @default(uuid())
+  userId      String  // Propietario (Auth Service)
+  vehicleId   String  // Vehicle (Vehicle Service)
+  workshopId  String  // Workshop (Workshop Service)
+  diagnosisId String? // DiagnosisSession (Diagnosis Service) - opcional
+  
+  // TimeSlot VO
+  scheduledDate     DateTime
+  scheduledTime     String   // HH:mm formato 24h
+  durationMinutes   Int      @default(60)
+  
+  // ServiceType VO
+  serviceType        String
+  serviceDescription String?  @db.Text
+  
+  // AppointmentStatus VO
+  status AppointmentStatus @default(PENDING)
+  
+  // Cost VO
+  estimatedCostAmount   Decimal?  @db.Decimal(10, 2)
+  estimatedCostCurrency String?   @default("MXN")
+  finalCostAmount       Decimal?  @db.Decimal(10, 2)
+  finalCostCurrency     String?   @default("MXN")
+  
+  // Additional details
+  notes           String?   @db.Text
+  workPerformed   String?   @db.Text
+  recommendations String?   @db.Text
+  
+  // Cancellation
+  cancellationReason String?
+  cancelledAt        DateTime?
+  cancelledBy        String?  // userId de quien canceló
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  
+  // Child Entities (Relationships)
+  progressUpdates AppointmentProgress[]
+  chatMessages    ChatMessage[]
+  
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([workshopId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("appointments")
+}
+
+// ============================================
+// CHILD ENTITY: AppointmentProgress (NUEVA)
+// ============================================
+model AppointmentProgress {
+  id            String      @id @default(uuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  
+  status String  // Ej: "Recibido", "En diagnóstico", "En reparación", "Listo"
+  notes  String? @db.Text
+  
+  photoUrls String[] // Fotos del progreso
+  
+  updatedBy        String   // userId del mecánico/gerente
+  isVisibleToClient Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([appointmentId])
+  @@index([createdAt]) // Para ordenar timeline
+  @@map("appointment_progress")
+}
+
+// ============================================
+// CHILD ENTITY: ChatMessage (NUEVA)
+// ============================================
+model ChatMessage {
+  id            String      @id @default(uuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  
+  senderId String  // userId (puede ser propietario o taller)
+  
+  // MessageType VO
+  messageType MessageType @default(TEXT)
+  
+  // MessageContent VO
+  content        String  @db.Text
+  attachmentUrl  String?
+  
+  // Status
+  isRead Boolean   @default(false)
+  readAt DateTime?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([appointmentId])
+  @@index([senderId])
+  @@index([createdAt]) // Para ordenar conversación
+  @@map("chat_messages")
+}
+
+// ============================================
+// AGGREGATE ROOT: Notification
+// ============================================
+model Notification {
+  id     String @id @default(uuid())
+  userId String // Destinatario
+  
+  // NotificationType VO
+  notificationType NotificationType
+  
+  // NotificationContent VO
+  subject  String?
+  body     String   @db.Text
+  metadata Json?    // Datos adicionales (appointmentId, deeplink, etc.)
+  
+  // NotificationStatus VO
+  status NotificationStatus @default(PENDING)
+  
+  // Delivery tracking
+  sentAt       DateTime?
+  errorMessage String?
+  
+  // Related entity (para deeplinks)
+  relatedEntityType String? // "Appointment", "Review", etc.
+  relatedEntityId   String?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// ENUMS (Value Objects)
+// ============================================
+enum AppointmentStatus {
+  PENDING      // Recién creada
+  CONFIRMED    // Taller aceptó
+  IN_PROGRESS  // Servicio iniciado
+  COMPLETED    // Servicio terminado
+  CANCELLED    // Cancelada
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  DOCUMENT
+}
+
+enum NotificationType {
+  EMAIL
+  PUSH
+  SMS
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
