@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { NotificationRepository } from '../../../domain/repositories/notification.repository';
 import { NotificationNotFoundException } from '../../../domain/exceptions/notification.exceptions';
 
 @Injectable()
 export class MarkNotificationReadUseCase {
-  constructor(private readonly notificationRepository: NotificationRepository) {}
+  constructor(
+    @Inject('NotificationRepository') // <--- LA CORRECCIÓN CLAVE
+    private readonly notificationRepository: NotificationRepository
+  ) {}
 
   async execute(notificationId: string): Promise<void> {
     const notification = await this.notificationRepository.findById(notificationId);
