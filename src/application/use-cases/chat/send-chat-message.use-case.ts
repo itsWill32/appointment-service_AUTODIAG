@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ChatMessageRepository } from '../../../domain/repositories/chat-message.repository';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { ChatMessage } from '../../../domain/entities/chat-message.entity';
@@ -10,7 +10,9 @@ import { AppointmentNotFoundException } from '../../../domain/exceptions/appoint
 @Injectable()
 export class SendChatMessageUseCase {
   constructor(
+    @Inject('ChatMessageRepository')
     private readonly chatMessageRepository: ChatMessageRepository,
+    @Inject('AppointmentRepository')
     private readonly appointmentRepository: AppointmentRepository,
   ) {}
 

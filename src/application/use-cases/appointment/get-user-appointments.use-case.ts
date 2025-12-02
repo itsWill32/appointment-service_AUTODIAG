@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { Appointment } from '../../../domain/entities/appointment.entity';
 import { UserId } from '../../../domain/value-objects/user-id.vo';
@@ -6,7 +6,10 @@ import { AppointmentStatus } from '../../../domain/value-objects/appointment-sta
 
 @Injectable()
 export class GetUserAppointmentsUseCase {
-  constructor(private readonly appointmentRepository: AppointmentRepository) {}
+  constructor(
+    @Inject('AppointmentRepository')
+    private readonly appointmentRepository: AppointmentRepository
+  ) {}
 
   async execute(userId: string, status?: string, limit?: number): Promise<Appointment[]> {
     const userIdVo = new UserId(userId);

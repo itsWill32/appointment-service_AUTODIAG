@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { Appointment } from '../../../domain/entities/appointment.entity';
 import { UserId } from '../../../domain/value-objects/user-id.vo';
@@ -12,7 +12,10 @@ import { DuplicateAppointmentException, PastDateAppointmentException } from '../
 
 @Injectable()
 export class CreateAppointmentUseCase {
-  constructor(private readonly appointmentRepository: AppointmentRepository) {}
+  constructor(
+    @Inject('AppointmentRepository')
+    private readonly appointmentRepository: AppointmentRepository
+  ) {}
 
   async execute(dto: CreateAppointmentDto, userId: string): Promise<Appointment> {
     const scheduledDate = new Date(dto.scheduledDate);

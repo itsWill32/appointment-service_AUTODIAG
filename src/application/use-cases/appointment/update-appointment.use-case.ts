@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { Appointment } from '../../../domain/entities/appointment.entity';
 import { AppointmentId } from '../../../domain/value-objects/appointment-id.vo';
@@ -8,7 +8,10 @@ import { AppointmentNotFoundException, AppointmentCannotBeModifiedException } fr
 
 @Injectable()
 export class UpdateAppointmentUseCase {
-  constructor(private readonly appointmentRepository: AppointmentRepository) {}
+  constructor(
+    @Inject('AppointmentRepository')
+    private readonly appointmentRepository: AppointmentRepository
+  ) {}
 
   async execute(appointmentId: string, dto: UpdateAppointmentDto): Promise<Appointment> {
     const appointment = await this.appointmentRepository.findById(

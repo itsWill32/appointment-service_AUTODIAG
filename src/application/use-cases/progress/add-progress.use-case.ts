@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { AppointmentProgress } from '../../../domain/entities/appointment-progress.entity';
 import { AppointmentId } from '../../../domain/value-objects/appointment-id.vo';
@@ -9,7 +9,10 @@ import { AppointmentNotFoundException } from '../../../domain/exceptions/appoint
 
 @Injectable()
 export class AddProgressUseCase {
-  constructor(private readonly appointmentRepository: AppointmentRepository) {}
+  constructor(
+    @Inject('AppointmentRepository')
+    private readonly appointmentRepository: AppointmentRepository
+  ) {}
 
   async execute(
     appointmentId: string,

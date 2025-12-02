@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
 import { Appointment } from '../../../domain/entities/appointment.entity';
 import { AppointmentId } from '../../../domain/value-objects/appointment-id.vo';
@@ -8,7 +8,10 @@ import { AppointmentNotFoundException } from '../../../domain/exceptions/appoint
 
 @Injectable()
 export class CompleteAppointmentUseCase {
-  constructor(private readonly appointmentRepository: AppointmentRepository) {}
+  constructor(
+    @Inject('AppointmentRepository')
+    private readonly appointmentRepository: AppointmentRepository
+  ) {}
 
   async execute(appointmentId: string, dto: CompleteAppointmentDto): Promise<Appointment> {
     const appointment = await this.appointmentRepository.findById(
