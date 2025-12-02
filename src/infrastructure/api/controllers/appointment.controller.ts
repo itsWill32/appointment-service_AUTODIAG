@@ -24,8 +24,6 @@ import { GetUserAppointmentsUseCase } from '../../../application/use-cases/appoi
 import { UpdateAppointmentUseCase } from '../../../application/use-cases/appointment/update-appointment.use-case';
 import { CancelAppointmentUseCase } from '../../../application/use-cases/appointment/cancel-appointment.use-case';
 import { CompleteAppointmentUseCase } from '../../../application/use-cases/appointment/complete-appointment.use-case';
-import { UserId } from '../../../domain/value-objects/user-id.vo';
-import { AppointmentId } from '../../../domain/value-objects/appointment-id.vo';
 
 @Controller('appointments')
 @UseGuards(JwtAuthGuard)
@@ -42,7 +40,7 @@ export class AppointmentController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@CurrentUser('sub') userId: string, @Body() dto: CreateAppointmentDto) {
-    return this.createAppointmentUseCase.execute(new UserId(userId), dto);
+    return this.createAppointmentUseCase.execute(dto, userId);
   }
 
   @Get()
@@ -50,12 +48,12 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Query() query: QueryParamsDto,
   ) {
-    return this.getUserAppointmentsUseCase.execute(new UserId(userId), query.status, query.limit);
+    return this.getUserAppointmentsUseCase.execute(userId, query.status, query.limit);
   }
 
   @Get(':id')
   async getById(@Param('id') id: string) {
-    return this.getAppointmentByIdUseCase.execute(new AppointmentId(id));
+    return this.getAppointmentByIdUseCase.execute(id);
   }
 
   @Patch(':id')
@@ -64,7 +62,7 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Body() dto: UpdateAppointmentDto,
   ) {
-    return this.updateAppointmentUseCase.execute(new AppointmentId(id), new UserId(userId), dto);
+    return this.updateAppointmentUseCase.execute(id, dto);
   }
 
   @Post(':id/cancel')
@@ -73,7 +71,8 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Body() dto: CancelAppointmentDto,
   ) {
-    return this.cancelAppointmentUseCase.execute(new AppointmentId(id), new UserId(userId), dto.reason);
+    // CORRECCIÓN: Orden (id, DTO, userId)
+    return this.cancelAppointmentUseCase.execute(id, dto, userId);
   }
 
   @Post(':id/complete')
@@ -82,12 +81,8 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Body() dto: CompleteAppointmentDto,
   ) {
-    return this.completeAppointmentUseCase.execute(
-      new AppointmentId(id),
-      new UserId(userId),
-      dto.finalCost,
-      dto.notes,
-    );
+    // CORRECCIÓN: Solo (id, DTO). El caso de uso no pide userId.
+    return this.completeAppointmentUseCase.execute(id, dto);
   }
 
   @Delete(':id')
