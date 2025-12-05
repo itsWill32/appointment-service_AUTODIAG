@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
@@ -181,46 +180,47 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (progressList.length > 0) {
       await Promise.all(progressList.map(p =>
         this.prisma.appointmentProgress.upsert({
-          where: { id: p.getId() },
+          where: { id: p.id }, 
           create: {
-            id: p.getId(),
+            id: p.id,
             appointmentId: appointment.getId().getValue(),
-            stage: p.getStage().getValue() as any,
-            createdBy: p.getCreatedBy().getValue(),
-            description: p.getDescription(),
-            photos: p.getPhotos(),
-            estimatedCompletion: p.getEstimatedCompletion(),
-            createdAt: p.getCreatedAt(),
+            stage: p.stage.toString() as any, 
+            createdBy: p.createdBy.getValue(),
+            description: p.description,
+            photos: p.photos,
+            estimatedCompletion: p.estimatedCompletion,
+            createdAt: p.createdAt,
           },
           update: {
-            stage: p.getStage().getValue() as any,
-            description: p.getDescription(),
-            photos: p.getPhotos(),
-            estimatedCompletion: p.getEstimatedCompletion(),
+            stage: p.stage.toString() as any,
+            description: p.description,
+            photos: p.photos,
+            estimatedCompletion: p.estimatedCompletion,
           }
         })
       ));
     }
 
+    // Sincronizar Mensajes usando Getters Públicos
     const messagesList = appointment.getMessages();
     if (messagesList.length > 0) {
       await Promise.all(messagesList.map(m =>
         this.prisma.chatMessage.upsert({
-          where: { id: m.getId() },
+          where: { id: m.id }, // Getter público .id
           create: {
-            id: m.getId(),
+            id: m.id,
             appointmentId: appointment.getId().getValue(),
-            senderId: m.getSenderId().getValue(),
-            senderRole: m.getSenderRole(),
-            message: m.getMessage(),
-            attachments: m.getAttachments() ?? [],
-            isRead: m.getIsRead(),
-            readAt: m.getReadAt(),
-            createdAt: m.getCreatedAt(),
+            senderId: m.senderId.getValue(),
+            senderRole: m.senderRole,
+            message: m.message,
+            attachments: m.attachments ?? [],
+            isRead: m.isRead,
+            readAt: m.readAt,
+            createdAt: m.createdAt,
           },
           update: {
-            isRead: m.getIsRead(),
-            readAt: m.getReadAt(),
+            isRead: m.isRead,
+            readAt: m.readAt,
           }
         })
       ));
@@ -302,9 +302,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
           new UserId(p.createdBy),
           new Date(p.createdAt),
         );
-        if (p.description) (progress as any).description = p.description;
-        if (p.photos) (progress as any).photos = p.photos;
-        if (p.estimatedCompletion) (progress as any).estimatedCompletion = new Date(p.estimatedCompletion);
+        if (p.description) (progress as any)._description = p.description;
+        if (p.photos) (progress as any)._photos = p.photos;
+        if (p.estimatedCompletion) (progress as any)._estimatedCompletion = new Date(p.estimatedCompletion);
         return progress;
       });
       (appointment as any).progress = progressList;
@@ -320,10 +320,11 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
           m.message,
           new Date(m.createdAt),
         );
-        if (m.attachments) (message as any).attachments = m.attachments;
+        // Accedemos a las propiedades con guion bajo
+        if (m.attachments) (message as any)._attachments = m.attachments;
         if (m.isRead) {
-          (message as any).isRead = m.isRead;
-          if (m.readAt) (message as any).readAt = new Date(m.readAt);
+          (message as any)._isRead = m.isRead;
+          if (m.readAt) (message as any)._readAt = new Date(m.readAt);
         }
         return message;
       });
