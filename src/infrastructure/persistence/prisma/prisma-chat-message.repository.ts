@@ -12,15 +12,15 @@ export class PrismaChatMessageRepository implements ChatMessageRepository {
   async save(message: ChatMessage): Promise<void> {
     await this.prisma.chatMessage.create({
       data: {
-        id: message.getId(),
-        appointmentId: message.getAppointmentId().getValue(),
-        senderId: message.getSenderId().getValue(),
-        senderRole: message.getSenderRole(),
-        message: message.getMessage(),
-        attachments: message.getAttachments(),
-        isRead: message.getIsRead(),
-        readAt: message.getReadAt(),
-        createdAt: message.getCreatedAt(),
+        id: message.id,
+        appointmentId: message.appointmentId.getValue(),
+        senderId: message.senderId.getValue(),
+        senderRole: message.senderRole,
+        message: message.message,
+        attachments: message.attachments,
+        isRead: message.isRead,
+        readAt: message.readAt,
+        createdAt: message.createdAt,
       },
     });
   }
@@ -107,10 +107,15 @@ export class PrismaChatMessageRepository implements ChatMessageRepository {
       new Date(data.createdAt),
     );
 
-    if (data.attachments) (message as any).attachments = data.attachments;
+    if (data.attachments) {
+      (message as any)._attachments = data.attachments;
+    }
+    
     if (data.isRead) {
-      (message as any).isRead = data.isRead;
-      if (data.readAt) (message as any).readAt = new Date(data.readAt);
+      (message as any)._isRead = data.isRead;
+      if (data.readAt) {
+        (message as any)._readAt = new Date(data.readAt);
+      }
     }
 
     return message;
