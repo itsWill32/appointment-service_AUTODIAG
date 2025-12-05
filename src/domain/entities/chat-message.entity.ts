@@ -113,11 +113,25 @@ export class ChatMessage {
     if (!attachmentUrl || attachmentUrl.trim().length === 0) {
       throw new Error('Attachment URL cannot be empty');
     }
-    
+
     if (this._attachments.length >= 3) {
       throw new Error('Cannot add more than 3 attachments per message');
     }
-    
+
     this._attachments.push(attachmentUrl);
+  }
+
+  toJSON() {
+    return {
+      id: this._id,
+      appointmentId: this._appointmentId.getValue(),
+      senderId: this._senderId.getValue(),
+      senderRole: this._senderRole,
+      message: this._message,
+      attachments: this._attachments,
+      isRead: this._isRead,
+      readAt: this._readAt,
+      createdAt: this._createdAt,
+    };
   }
 }

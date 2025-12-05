@@ -97,4 +97,17 @@ export class AppointmentProgress {
     }
     this._photos.push(photoUrl);
   }
+
+  toJSON() {
+    return {
+      id: this._id,
+      appointmentId: this._appointmentId.getValue(),
+      stage: this._stage.getValue(),
+      description: this._description,
+      photos: this._photos,
+      estimatedCompletion: this._estimatedCompletion,
+      createdBy: this._createdBy.getValue(),
+      createdAt: this._createdAt,
+    };
+  }
 }
