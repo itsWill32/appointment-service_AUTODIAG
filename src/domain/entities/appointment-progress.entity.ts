@@ -4,14 +4,14 @@ import { UserId } from '../value-objects/user-id.vo';
 import { ProgressStage } from '../value-objects/progress-stage.vo';
 
 export class AppointmentProgress {
-  private readonly id: string;
-  private readonly appointmentId: AppointmentId;
-  private readonly stage: ProgressStage;
-  private description?: string;
-  private photos: string[] = [];
-  private estimatedCompletion?: Date;
-  private readonly createdBy: UserId;
-  private readonly createdAt: Date;
+  private readonly _id: string;
+  private readonly _appointmentId: AppointmentId;
+  private readonly _stage: ProgressStage;
+  private _description?: string;
+  private _photos: string[] = [];
+  private _estimatedCompletion?: Date;
+  private readonly _createdBy: UserId;
+  private readonly _createdAt: Date;
 
   constructor(
     id: string,
@@ -20,11 +20,11 @@ export class AppointmentProgress {
     createdBy: UserId,
     createdAt: Date,
   ) {
-    this.id = id;
-    this.appointmentId = appointmentId;
-    this.stage = stage;
-    this.createdBy = createdBy;
-    this.createdAt = createdAt;
+    this._id = id;
+    this._appointmentId = appointmentId;
+    this._stage = stage;
+    this._createdBy = createdBy;
+    this._createdAt = createdAt;
   }
 
   static create(
@@ -43,49 +43,58 @@ export class AppointmentProgress {
       new Date(),
     );
     
-    progress.description = description;
-    progress.photos = photos || [];
-    progress.estimatedCompletion = estimatedCompletion;
+    progress._description = description;
+    progress._photos = photos || [];
+    progress._estimatedCompletion = estimatedCompletion;
     
     return progress;
   }
 
+  get id(): string { return this._id; }
+  get appointmentId(): AppointmentId { return this._appointmentId; }
+  get stage(): ProgressStage { return this._stage; }
+  get createdBy(): UserId { return this._createdBy; }
+  get description(): string | undefined { return this._description; }
+  get photos(): string[] { return [...this._photos]; }
+  get estimatedCompletion(): Date | undefined { return this._estimatedCompletion; }
+  get createdAt(): Date { return this._createdAt; }
+
   getId(): string {
-    return this.id;
+    return this._id;
   }
 
   getAppointmentId(): AppointmentId {
-    return this.appointmentId;
+    return this._appointmentId;
   }
 
   getStage(): ProgressStage {
-    return this.stage;
+    return this._stage;
   }
 
   getDescription(): string | undefined {
-    return this.description;
+    return this._description;
   }
 
   getPhotos(): string[] {
-    return [...this.photos];
+    return [...this._photos];
   }
 
   getEstimatedCompletion(): Date | undefined {
-    return this.estimatedCompletion;
+    return this._estimatedCompletion;
   }
 
   getCreatedBy(): UserId {
-    return this.createdBy;
+    return this._createdBy;
   }
 
   getCreatedAt(): Date {
-    return this.createdAt;
+    return this._createdAt;
   }
 
   addPhoto(photoUrl: string): void {
     if (!photoUrl || photoUrl.trim().length === 0) {
       throw new Error('Photo URL cannot be empty');
     }
-    this.photos.push(photoUrl);
+    this._photos.push(photoUrl);
   }
 }

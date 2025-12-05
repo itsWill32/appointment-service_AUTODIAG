@@ -3,15 +3,15 @@ import { AppointmentId } from '../value-objects/appointment-id.vo';
 import { UserId } from '../value-objects/user-id.vo';
 
 export class ChatMessage {
-  private readonly id: string;
-  private readonly appointmentId: AppointmentId;
-  private readonly senderId: UserId;
-  private readonly senderRole: string;
-  private message: string;
-  private attachments: string[] = [];
-  private isRead: boolean = false;
-  private readAt?: Date;
-  private readonly createdAt: Date;
+  private readonly _id: string; 
+  private readonly _appointmentId: AppointmentId;
+  private readonly _senderId: UserId;
+  private readonly _senderRole: string;
+  private _message: string;
+  private _attachments: string[] = [];
+  private _isRead: boolean = false;
+  private _readAt?: Date;
+  private readonly _createdAt: Date;
 
   constructor(
     id: string,
@@ -21,12 +21,12 @@ export class ChatMessage {
     message: string,
     createdAt: Date,
   ) {
-    this.id = id;
-    this.appointmentId = appointmentId;
-    this.senderId = senderId;
-    this.senderRole = senderRole;
-    this.message = message;
-    this.createdAt = createdAt;
+    this._id = id;
+    this._appointmentId = appointmentId;
+    this._senderId = senderId;
+    this._senderRole = senderRole;
+    this._message = message;
+    this._createdAt = createdAt;
   }
 
   static create(
@@ -53,50 +53,60 @@ export class ChatMessage {
       new Date(),
     );
     
-    chatMessage.attachments = attachments || [];
+    chatMessage._attachments = attachments || [];
     
     return chatMessage;
   }
 
+  get id(): string { return this._id; }
+  get appointmentId(): AppointmentId { return this._appointmentId; }
+  get senderId(): UserId { return this._senderId; }
+  get senderRole(): string { return this._senderRole; }
+  get message(): string { return this._message; }
+  get attachments(): string[] { return [...this._attachments]; }
+  get isRead(): boolean { return this._isRead; }
+  get readAt(): Date | undefined { return this._readAt; }
+  get createdAt(): Date { return this._createdAt; }
+
   getId(): string {
-    return this.id;
+    return this._id;
   }
 
   getAppointmentId(): AppointmentId {
-    return this.appointmentId;
+    return this._appointmentId;
   }
 
   getSenderId(): UserId {
-    return this.senderId;
+    return this._senderId;
   }
 
   getSenderRole(): string {
-    return this.senderRole;
+    return this._senderRole;
   }
 
   getMessage(): string {
-    return this.message;
+    return this._message;
   }
 
   getAttachments(): string[] {
-    return [...this.attachments];
+    return [...this._attachments];
   }
 
   getIsRead(): boolean {
-    return this.isRead;
+    return this._isRead;
   }
 
   getReadAt(): Date | undefined {
-    return this.readAt;
+    return this._readAt;
   }
 
   getCreatedAt(): Date {
-    return this.createdAt;
+    return this._createdAt;
   }
 
   markAsRead(): void {
-    this.isRead = true;
-    this.readAt = new Date();
+    this._isRead = true;
+    this._readAt = new Date();
   }
 
   addAttachment(attachmentUrl: string): void {
@@ -104,10 +114,10 @@ export class ChatMessage {
       throw new Error('Attachment URL cannot be empty');
     }
     
-    if (this.attachments.length >= 3) {
+    if (this._attachments.length >= 3) {
       throw new Error('Cannot add more than 3 attachments per message');
     }
     
-    this.attachments.push(attachmentUrl);
+    this._attachments.push(attachmentUrl);
   }
 }

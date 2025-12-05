@@ -22,7 +22,7 @@ export class QueryParamsDto {
   limit?: number = 10;
 
     
-  @IsOptional()      // ← AGREGAR ESTAS 3 LÍNEAS
-  @IsString()        // ←
+  @IsOptional()      
+  @IsString()        
   workshopId?: string; 
 }

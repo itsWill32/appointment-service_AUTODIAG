@@ -175,6 +175,55 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         updatedAt: appointment.getUpdatedAt(),
       },
     });
+
+    const progressList = appointment.getProgress();
+    if (progressList.length > 0) {
+      await Promise.all(progressList.map(p => 
+        this.prisma.appointmentProgress.upsert({
+          where: { id: p.id }, 
+          create: { 
+            id: p.id,
+            appointmentId: appointment.getId().getValue(),
+            stage: p.stage.toString() as any, 
+            createdBy: p.createdBy.getValue(),
+            description: p.description,
+            photos: p.photos,
+            estimatedCompletion: p.estimatedCompletion,
+            createdAt: p.createdAt,
+          },
+          update: { 
+            stage: p.stage.toString() as any,
+            description: p.description,
+            photos: p.photos,
+            estimatedCompletion: p.estimatedCompletion,
+          }
+        })
+      ));
+    }
+
+    const messagesList = appointment.getMessages();
+    if (messagesList.length > 0) {
+      await Promise.all(messagesList.map(m => 
+        this.prisma.chatMessage.upsert({
+          where: { id: m.id },
+          create: {
+            id: m.id,
+            appointmentId: appointment.getId().getValue(),
+            senderId: m.senderId.getValue(),
+            senderRole: m.senderRole,
+            message: m.message,
+            attachments: m.attachments ?? [], 
+            isRead: m.isRead,
+            readAt: m.readAt,
+            createdAt: m.createdAt,
+          },
+          update: {
+            isRead: m.isRead,
+            readAt: m.readAt,
+          }
+        })
+      ));
+    }
   }
 
   async delete(id: AppointmentId): Promise<void> {
