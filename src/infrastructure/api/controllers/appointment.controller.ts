@@ -46,9 +46,18 @@ export class AppointmentController {
   @Get()
   async getUserAppointments(
     @CurrentUser('sub') userId: string,
+    @CurrentUser('role') role: string,
     @Query() query: QueryParamsDto,
   ) {
-    return this.getUserAppointmentsUseCase.execute(userId, query.status, query.limit);
+    const workshopId = (query as any).workshopId;
+
+    return this.getUserAppointmentsUseCase.execute(
+      userId, 
+      role, 
+      query.status, 
+      query.limit,
+      workshopId
+    );
   }
 
   @Get(':id')
@@ -71,7 +80,6 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Body() dto: CancelAppointmentDto,
   ) {
-    // CORRECCIÓN: Orden (id, DTO, userId)
     return this.cancelAppointmentUseCase.execute(id, dto, userId);
   }
 
@@ -81,7 +89,6 @@ export class AppointmentController {
     @CurrentUser('sub') userId: string,
     @Body() dto: CompleteAppointmentDto,
   ) {
-    // CORRECCIÓN: Solo (id, DTO). El caso de uso no pide userId.
     return this.completeAppointmentUseCase.execute(id, dto);
   }
 

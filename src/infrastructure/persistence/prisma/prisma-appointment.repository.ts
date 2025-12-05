@@ -230,45 +230,19 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       new Date(data.updatedAt),
     );
 
-    // Reconstruir propiedades opcionales usando reflexión
-    if (data.diagnosisId) {
-      (appointment as any).diagnosisId = data.diagnosisId;
-    }
-    if (data.description) {
-      (appointment as any).description = data.description;
-    }
-    if (data.estimatedDuration) {
-      (appointment as any).estimatedDuration = data.estimatedDuration;
-    }
-    if (data.estimatedCost) {
-      (appointment as any).estimatedCost = new Money(data.estimatedCost);
-    }
-    if (data.finalCost) {
-      (appointment as any).finalCost = new Money(data.finalCost);
-    }
-    if (data.cancelledAt) {
-      (appointment as any).cancelledAt = new Date(data.cancelledAt);
-    }
-    if (data.cancelReason) {
-      (appointment as any).cancelReason = data.cancelReason;
-    }
-    if (data.cancelledBy) {
-      (appointment as any).cancelledBy = data.cancelledBy;
-    }
-    if (data.completedAt) {
-      (appointment as any).completedAt = new Date(data.completedAt);
-    }
-    if (data.notes) {
-      (appointment as any).notes = data.notes;
-    }
-    if (data.photos) {
-      (appointment as any).photos = data.photos;
-    }
-    if (data.documents) {
-      (appointment as any).documents = data.documents;
-    }
+    if (data.diagnosisId) (appointment as any).diagnosisId = data.diagnosisId;
+    if (data.description) (appointment as any).description = data.description;
+    if (data.estimatedDuration) (appointment as any).estimatedDuration = data.estimatedDuration;
+    if (data.estimatedCost) (appointment as any).estimatedCost = new Money(data.estimatedCost);
+    if (data.finalCost) (appointment as any).finalCost = new Money(data.finalCost);
+    if (data.cancelledAt) (appointment as any).cancelledAt = new Date(data.cancelledAt);
+    if (data.cancelReason) (appointment as any).cancelReason = data.cancelReason;
+    if (data.cancelledBy) (appointment as any).cancelledBy = data.cancelledBy;
+    if (data.completedAt) (appointment as any).completedAt = new Date(data.completedAt);
+    if (data.notes) (appointment as any).notes = data.notes;
+    if (data.photos) (appointment as any).photos = data.photos;
+    if (data.documents) (appointment as any).documents = data.documents;
 
-    // Reconstruir progress
     if (data.progress) {
       const progressList = data.progress.map((p: any) => {
         const progress = new AppointmentProgress(
@@ -286,7 +260,6 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       (appointment as any).progress = progressList;
     }
 
-    // Reconstruir messages
     if (data.messages) {
       const messagesList = data.messages.map((m: any) => {
         const message = new ChatMessage(
