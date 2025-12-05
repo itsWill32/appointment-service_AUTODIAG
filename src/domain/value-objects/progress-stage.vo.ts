@@ -6,6 +6,7 @@ export enum ProgressStageEnum {
   IN_REPAIR = 'IN_REPAIR',
   QUALITY_CHECK = 'QUALITY_CHECK',
   READY = 'READY',
+  READY_FOR_PICKUP = 'READY_FOR_PICKUP',
 }
 
 export class ProgressStage {
@@ -43,6 +44,7 @@ export class ProgressStage {
       [ProgressStageEnum.IN_REPAIR]: 'En reparación',
       [ProgressStageEnum.QUALITY_CHECK]: 'Control de calidad',
       [ProgressStageEnum.READY]: 'Listo para recoger',
+      [ProgressStageEnum.READY_FOR_PICKUP]: 'Listo para recoger',
     };
     return names[this.value];
   }
