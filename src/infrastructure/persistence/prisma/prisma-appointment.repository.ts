@@ -1,3 +1,4 @@
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { AppointmentRepository } from '../../../domain/repositories/appointment.repository';
@@ -178,24 +179,24 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
     const progressList = appointment.getProgress();
     if (progressList.length > 0) {
-      await Promise.all(progressList.map(p => 
+      await Promise.all(progressList.map(p =>
         this.prisma.appointmentProgress.upsert({
-          where: { id: p.id }, 
-          create: { 
-            id: p.id,
+          where: { id: p.getId() },
+          create: {
+            id: p.getId(),
             appointmentId: appointment.getId().getValue(),
-            stage: p.stage.toString() as any, 
-            createdBy: p.createdBy.getValue(),
-            description: p.description,
-            photos: p.photos,
-            estimatedCompletion: p.estimatedCompletion,
-            createdAt: p.createdAt,
+            stage: p.getStage().getValue() as any,
+            createdBy: p.getCreatedBy().getValue(),
+            description: p.getDescription(),
+            photos: p.getPhotos(),
+            estimatedCompletion: p.getEstimatedCompletion(),
+            createdAt: p.getCreatedAt(),
           },
-          update: { 
-            stage: p.stage.toString() as any,
-            description: p.description,
-            photos: p.photos,
-            estimatedCompletion: p.estimatedCompletion,
+          update: {
+            stage: p.getStage().getValue() as any,
+            description: p.getDescription(),
+            photos: p.getPhotos(),
+            estimatedCompletion: p.getEstimatedCompletion(),
           }
         })
       ));
@@ -203,23 +204,23 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
     const messagesList = appointment.getMessages();
     if (messagesList.length > 0) {
-      await Promise.all(messagesList.map(m => 
+      await Promise.all(messagesList.map(m =>
         this.prisma.chatMessage.upsert({
-          where: { id: m.id },
+          where: { id: m.getId() },
           create: {
-            id: m.id,
+            id: m.getId(),
             appointmentId: appointment.getId().getValue(),
-            senderId: m.senderId.getValue(),
-            senderRole: m.senderRole,
-            message: m.message,
-            attachments: m.attachments ?? [], 
-            isRead: m.isRead,
-            readAt: m.readAt,
-            createdAt: m.createdAt,
+            senderId: m.getSenderId().getValue(),
+            senderRole: m.getSenderRole(),
+            message: m.getMessage(),
+            attachments: m.getAttachments() ?? [],
+            isRead: m.getIsRead(),
+            readAt: m.getReadAt(),
+            createdAt: m.getCreatedAt(),
           },
           update: {
-            isRead: m.isRead,
-            readAt: m.readAt,
+            isRead: m.getIsRead(),
+            readAt: m.getReadAt(),
           }
         })
       ));
