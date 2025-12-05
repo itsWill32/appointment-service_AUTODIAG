@@ -20,4 +20,9 @@ export class QueryParamsDto {
   @Min(1)
   @Max(100)
   limit?: number = 10;
+
+    
+  @IsOptional()      // ← AGREGAR ESTAS 3 LÍNEAS
+  @IsString()        // ←
+  workshopId?: string; 
 }
