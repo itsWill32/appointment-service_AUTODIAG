@@ -24,6 +24,7 @@ import { GetUserAppointmentsUseCase } from '../../../application/use-cases/appoi
 import { UpdateAppointmentUseCase } from '../../../application/use-cases/appointment/update-appointment.use-case';
 import { CancelAppointmentUseCase } from '../../../application/use-cases/appointment/cancel-appointment.use-case';
 import { CompleteAppointmentUseCase } from '../../../application/use-cases/appointment/complete-appointment.use-case';
+import { ConfirmAppointmentUseCase } from '../../../application/use-cases/appointment/confirm-appointment.use-case';
 
 @Controller('appointments')
 @UseGuards(JwtAuthGuard)
@@ -35,6 +36,7 @@ export class AppointmentController {
     private readonly updateAppointmentUseCase: UpdateAppointmentUseCase,
     private readonly cancelAppointmentUseCase: CancelAppointmentUseCase,
     private readonly completeAppointmentUseCase: CompleteAppointmentUseCase,
+    private readonly confirmAppointmentUseCase: ConfirmAppointmentUseCase,
   ) {}
 
   @Post()
@@ -72,6 +74,14 @@ export class AppointmentController {
     @Body() dto: UpdateAppointmentDto,
   ) {
     return this.updateAppointmentUseCase.execute(id, dto);
+  }
+
+  @Post(':id/confirm')
+  @HttpCode(HttpStatus.OK)
+  async confirm(
+    @Param('id') id: string,
+  ) {
+    return this.confirmAppointmentUseCase.execute(id);
   }
 
   @Post(':id/cancel')

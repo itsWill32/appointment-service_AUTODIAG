@@ -6,6 +6,7 @@ import { GetUserAppointmentsUseCase } from '../../application/use-cases/appointm
 import { UpdateAppointmentUseCase } from '../../application/use-cases/appointment/update-appointment.use-case';
 import { CancelAppointmentUseCase } from '../../application/use-cases/appointment/cancel-appointment.use-case';
 import { CompleteAppointmentUseCase } from '../../application/use-cases/appointment/complete-appointment.use-case';
+import { ConfirmAppointmentUseCase } from '../../application/use-cases/appointment/confirm-appointment.use-case';
 
 @Module({
   controllers: [AppointmentController],
@@ -16,6 +17,7 @@ import { CompleteAppointmentUseCase } from '../../application/use-cases/appointm
     UpdateAppointmentUseCase,
     CancelAppointmentUseCase,
     CompleteAppointmentUseCase,
+    ConfirmAppointmentUseCase,
   ],
 })
 export class AppointmentModule {}

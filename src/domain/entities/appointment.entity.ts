@@ -97,7 +97,6 @@ export class Appointment {
     return appointment;
   }
 
-  // Getters
   getId(): AppointmentId {
     return this.id;
   }
@@ -198,13 +197,14 @@ export class Appointment {
     if (!this.status.isPending()) {
       throw new Error('Only pending appointments can be confirmed');
     }
-    this.status = AppointmentStatus.confirmed();
+
+    this.status = AppointmentStatus.confirmed(); 
     this.updatedAt = new Date();
   }
 
   startService(): void {
-    if (!this.status.isConfirmed()) {
-      throw new Error('Only confirmed appointments can be started');
+    if (!this.status.isConfirmed() && !this.status.isPending()) {
+      throw new Error('Appointment must be CONFIRMED or PENDING to start');
     }
     this.status = AppointmentStatus.inProgress();
     this.updatedAt = new Date();
