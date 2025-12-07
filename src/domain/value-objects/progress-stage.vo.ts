@@ -1,6 +1,7 @@
 export enum ProgressStageEnum {
   RECEIVED = 'RECEIVED',
   DIAGNOSIS = 'DIAGNOSIS',
+  IN_DIAGNOSIS = 'IN_DIAGNOSIS', 
   DIAGNOSIS_COMPLETE = 'DIAGNOSIS_COMPLETE',
   PARTS_ORDERED = 'PARTS_ORDERED',
   IN_REPAIR = 'IN_REPAIR',
@@ -39,6 +40,7 @@ export class ProgressStage {
     const names: Record<ProgressStageEnum, string> = {
       [ProgressStageEnum.RECEIVED]: 'Vehículo recibido',
       [ProgressStageEnum.DIAGNOSIS]: 'En diagnóstico',
+      [ProgressStageEnum.IN_DIAGNOSIS]: 'En diagnóstico', 
       [ProgressStageEnum.DIAGNOSIS_COMPLETE]: 'Diagnóstico completo',
       [ProgressStageEnum.PARTS_ORDERED]: 'Piezas ordenadas',
       [ProgressStageEnum.IN_REPAIR]: 'En reparación',
