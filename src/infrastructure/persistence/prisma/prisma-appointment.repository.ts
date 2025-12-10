@@ -17,7 +17,7 @@ import { AppointmentStatus as PrismaAppointmentStatus } from '@prisma/client';
 
 @Injectable()
 export class PrismaAppointmentRepository implements AppointmentRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async save(appointment: Appointment): Promise<void> {
     await this.prisma.appointment.create({
@@ -180,11 +180,11 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (progressList.length > 0) {
       await Promise.all(progressList.map(p =>
         this.prisma.appointmentProgress.upsert({
-          where: { id: p.id }, 
+          where: { id: p.id },
           create: {
             id: p.id,
             appointmentId: appointment.getId().getValue(),
-            stage: p.stage.toString() as any, 
+            stage: p.stage.toString() as any,
             createdBy: p.createdBy.getValue(),
             description: p.description,
             photos: p.photos,
@@ -264,6 +264,10 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         },
       },
     });
+  }
+
+  async count(): Promise<number> {
+    return this.prisma.appointment.count();
   }
 
   private toDomain(data: any): Appointment {

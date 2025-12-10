@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppointmentController } from '../api/controllers/appointment.controller';
+import { StatsController } from '../api/controllers/stats.controller';
 import { CreateAppointmentUseCase } from '../../application/use-cases/appointment/create-appointment.use-case';
 import { GetAppointmentByIdUseCase } from '../../application/use-cases/appointment/get-appointment-by-id.use-case';
 import { GetUserAppointmentsUseCase } from '../../application/use-cases/appointment/get-user-appointments.use-case';
@@ -9,7 +10,7 @@ import { CompleteAppointmentUseCase } from '../../application/use-cases/appointm
 import { ConfirmAppointmentUseCase } from '../../application/use-cases/appointment/confirm-appointment.use-case';
 
 @Module({
-  controllers: [AppointmentController],
+  controllers: [AppointmentController, StatsController],
   providers: [
     CreateAppointmentUseCase,
     GetAppointmentByIdUseCase,
@@ -20,4 +21,4 @@ import { ConfirmAppointmentUseCase } from '../../application/use-cases/appointme
     ConfirmAppointmentUseCase,
   ],
 })
-export class AppointmentModule {}
+export class AppointmentModule { }
